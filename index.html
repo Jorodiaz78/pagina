@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FerContable Pro - Sistema Integral de Gestión</title>
+    <style>
+        
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <h1>FerContable Pro</h1>
+                    <p style="opacity: 0.8; margin-top: 5px;">Sistema Integral de Gestión Empresarial</p>
+                </div>
+                <div class="header-stats">
+                    <div class="header-stat">
+                        <div class="value" id="headerVentas">$0</div>
+                        <div class="label">Ventas Hoy</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="value" id="headerProductos">0</div>
+                        <div class="label">Productos</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="value" id="headerClientes">0</div>
+                        <div class="label">Clientes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="showTab('ventas')">💰 Ventas</button>
+            <button class="nav-tab" onclick="showTab('inventario')">📦 Inventario</button>
+            <button class="nav-tab" onclick="showTab('clientes')">👥 Clientes</button>
+            <button class="nav-tab" onclick="showTab('proveedores')">🤝 Proveedores</button>
+            <button class="nav-tab" onclick="showTab('reportes')">📈 Reportes</button>
+            <button class="nav-tab" onclick="showTab('configuracion')">⚙ Configuración</button>
+        </div>
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="summary-grid">
+                <div class="summary-card income">
+                    <h3>Ventas del Mes</h3>
+                    <div class="amount" id="ventasMes">$0</div>
+                </div>
+                <div class="summary-card expense">
+                    <h3>Gastos del Mes</h3>
+                    <div class="amount" id="gastosMes">$0</div>
+                </div>
+                <div class="summary-card profit">
+                    <h3>Utilidad Neta</h3>
+                    <div class="amount" id="utilidadMes">$0</div>
+                </div>
+                <div class="summary-card inventory">
+                    <h3>Valor Inventario</h3>
+                    <div class="amount" id="valorInventario">$0</div>
+                </div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>🚀 Acciones Rápidas</h3>
+                    <div class="quick-actions">
+                        <button class="btn btn-success" onclick="showTab('ventas')">💵 Nueva Venta</button>
+                        <button class="btn" onclick="showTab('inventario')">📦 Agregar Producto</button>
+                        <button class="btn btn-warning" onclick="showTab('clientes')">👤 Nuevo Cliente</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚠ Alertas de Inventario</h3>
+                    <div id="alertasInventario">
+                        <p style="color: #6b7280; text-align: center; padding: 20px;">
+                            No hay alertas de inventario
+                        </p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>📊 Productos Más Vendidos</h3>
+                    <div id="topProductos">
+                        <p style="color: #6b7280; text-align: center; padding: 20px;">
+                            No hay datos de ventas aún
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Ventas Tab -->
+        <div id="ventas" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h2>💰 Nueva Venta</h2>
+                    <form id="ventaForm">
+                        <div class="form-group">
+                            <label>Cliente</label>
+                            <select id="ventaCliente" required>
+                                <option value="">Seleccionar cliente...</option>
+                                <option value="general">Cliente General</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Producto</label>
+                                <select id="ventaProducto" required>
+                                    <option value="">Seleccionar producto...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Cantidad</label>
+                                <input type="number" id="ventaCantidad" min="1" value="1" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Precio Unitario</label>
+                                <input type="number" id="ventaPrecio" step="1" min="0" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Total</label>
+                                <input type="number" id="ventaTotal" step="1" min="0" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Método de Pago</label>
+                            <select id="ventaMetodoPago" required>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="transferencia">Transferencia</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success" style="width: 100%;">💵 Procesar Venta</button>
+                    </form>
+                </div>
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h2>📝 Historial de Ventas</h2>
+                    <div class="search-bar">
+                        <input type="text" id="searchVentas" placeholder="Buscar ventas...">
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th>Método Pago</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ventasTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: #6b7280;">
+                                        No hay ventas registradas
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Inventario Tab -->
+        <div id="inventario" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h2>📦 Agregar Producto</h2>
+                    <form id="productoForm">
+                        <div class="form-group">
+                            <label>Nombre del Producto</label>
+                            <input type="text" id="productoNombre" placeholder="Ej: Camiseta Polo" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Código/SKU</label>
+                                <input type="text" id="productoCodigo" placeholder="SKU001" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Categoría</label>
+                                <select id="productoCategoria" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="ropa">Ropa</option>
+                                    <option value="electronica">Electrónica</option>
+                                    <option value="hogar">Hogar</option>
+                                    <option value="deportes">Deportes</option>
+                                    <option value="otros">Otros</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Precio de Compra</label>
+                                <input type="number" id="productoCompra" step="1" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Precio de Venta</label>
+                                <input type="number" id="productoVenta" step="1" min="0" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Stock Inicial</label>
+                                <input type="number" id="productoStock" min="0" value="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Stock Mínimo</label>
+                                <input type="number" id="productoMinimo" min="0" value="5" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Proveedor</label>
+                            <select id="productoProveedor">
+                                <option value="">Sin proveedor</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">📦 Agregar Producto</button>
+                    </form>
+                </div>
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h2>📋 Lista de Productos</h2>
+                    <div class="search-bar">
+                        <input type="text" id="searchProductos" placeholder="Buscar productos...">
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Stock</th>
+                                    <th>Precio Compra</th>
+                                    <th>Precio Venta</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productosTableBody">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 40px; color: #6b7280;">
+                                        No hay productos registrados
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Clientes Tab -->
+        <div id="clientes" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h2>👤 Agregar Cliente</h2>
+                    <form id="clienteForm">
+                        <div class="form-group">
+                            <label>Nombre Completo</label>
+                            <input type="text" id="clienteNombre" placeholder="Juan Pérez" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="text" id="clienteTelefono" placeholder="Ej: 3001234567">
+                        </div>
+                        <button type="submit" class="btn btn-warning" style="width: 100%;">Agregar Cliente</button>
+                    </form>
+                </div>
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h2>📋 Lista de Clientes</h2>
+                    <div class="search-bar">
+                        <input type="text" id="searchClientes" placeholder="Buscar clientes...">
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Teléfono</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientesTableBody">
+                                <tr>
+                                    <td colspan="3" style="text-align: center; padding: 40px; color: #6b7280;">
+                                        No hay clientes registrados
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Proveedores Tab -->
+        <div id="proveedores" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h2>🏢 Agregar Proveedor</h2>
+                    <form id="proveedorForm">
+                        <div class="form-group">
+                            <label>Nombre del Proveedor</label>
+                            <input type="text" id="proveedorNombre" placeholder="Proveedor S.A." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Contacto</label>
+                            <input type="text" id="proveedorContacto" placeholder="Ej: 3101234567">
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Agregar Proveedor</button>
+                    </form>
+                </div>
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h2>📋 Lista de Proveedores</h2>
+                    <div class="search-bar">
+                        <input type="text" id="searchProveedores" placeholder="Buscar proveedores...">
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Contacto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="proveedoresTableBody">
+                                <tr>
+                                    <td colspan="3" style="text-align: center; padding: 40px; color: #6b7280;">
+                                        No hay proveedores registrados
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Reportes Tab -->
+        <div id="reportes" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h2>📈 Reportes</h2>
+                    <p>
+                        Aquí puedes mostrar reportes de ventas, inventario, clientes, etc.<br>
+                        Por ejemplo: ventas totales, productos más vendidos, clientes frecuentes, etc.
+                    </p>
+                    <div style="margin-top: 30px;">
+                        <strong>Ventas totales:</strong> <span id="reporteVentasTotales">$0</span><br>
+                        <strong>Productos registrados:</strong> <span id="reporteProductosTotales">0</span><br>
+                        <strong>Clientes registrados:</strong> <span id="reporteClientesTotales">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Configuración Tab -->
+        <div id="configuracion" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h2>⚙ Configuración</h2>
+                    <p>
+                        Aquí puedes agregar opciones de configuración para tu sistema, como cambiar el nombre de la tienda, datos de contacto, etc.
+                    </p>
+                    <form id="configForm">
+                        <div class="form-group">
+                            <label>Nombre de la tienda</label>
+                            <input type="text" id="configNombreTienda" placeholder="FerContable Pro">
+                        </div>
+                        <div class="form-group">
+                            <label>Correo de contacto</label>
+                            <input type="email" id="configCorreo" placeholder="correo@ejemplo.com">
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Guardar Configuración</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Script principal -->
+    <script src="main.js"></script>
+</body>
+</html>
