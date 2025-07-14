@@ -33,9 +33,9 @@
         </div>
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
-            <button class="nav-tab" onclick="showTab('caja')">🗃️ Caja</button>
-            <button class="nav-tab" onclick="showTab('ventas')">💰 Ventas</button>
-            <button class="nav-tab" onclick="showTab('facturacion')">🧾 Facturación</button>
+            <button class="nav-tab" onclick="showTab('caja')">🗃 Caja</button>
+            <!-- unificar --><button class="nav-tab" onclick="showTab('ventas')">💰 Ventas</button>
+            <!-- unificar <button class="nav-tab" onclick="showTab('facturacion')">🧾 Facturación</button>  -->
             <button class="nav-tab" onclick="showTab('creditos')">💳 Créditos/CxC</button>
             <button class="nav-tab" onclick="showTab('cxp')">💸 Cuentas x Pagar</button>
             <button class="nav-tab" onclick="showTab('inventario')">📦 Inventario</button>
@@ -44,6 +44,7 @@
             <button class="nav-tab" onclick="showTab('alertas')">🔔 Alertas</button>
             <button class="nav-tab" onclick="showTab('reportes')">📈 Reportes</button>
             <button class="nav-tab" onclick="showTab('usuarios')">👤 Usuarios</button>
+          <!--    <button class="nav-tab" onclick="showTab('configuracion')">⚙ Configuración</button> -->
         </div>
 
         <!-- Dashboard -->
@@ -98,7 +99,7 @@
         <div id="caja" class="tab-content">
             <div class="dashboard-grid">
                 <div class="card">
-                    <h2>🗃️ Registro de Caja</h2>
+                    <h2>🗃 Registro de Caja</h2>
                     <form id="cajaForm">
                         <div class="form-group">
                             <label>Tipo</label>
@@ -663,4 +664,3 @@
     <script src="main.js"></script>
 </body>
 </html>
-
