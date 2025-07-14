@@ -58,32 +58,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para cambiar pestañas
     function showTab(tabId) {
-        // Ocultar todas las pestañas
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.remove('active');
         });
-
-        // Mostrar la pestaña seleccionada
         const selectedTab = document.getElementById(tabId);
         if (selectedTab) {
             selectedTab.classList.add('active');
         }
-
-        // Actualizar el estado activo de los botones de navegación
         document.querySelectorAll('.nav-tab').forEach(btn => {
             btn.classList.remove('active');
         });
-
-        // Añadir clase 'active' al botón correspondiente
         const activeButton = document.querySelector(`.nav-tab[onclick="showTab('${tabId}')"]`);
         if (activeButton) {
             activeButton.classList.add('active');
         }
-
-        // Actualizar datos según la pestaña
         updateDashboardAndReports();
         loadConfig();
-
         if(tabId === 'facturacion') {
             renderVentasPendientesFacturacion();
             renderFacturas();
@@ -105,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Asegurarse de que la función showTab esté accesible globalmente
     window.showTab = showTab;
 
     // Función para llenar selects de clientes
@@ -115,7 +104,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('creditoCliente'),
             document.getElementById('facturaCliente')
         ].filter(Boolean);
-
         selects.forEach(select => {
             const prevValue = select.value;
             select.innerHTML = '<option value="">Seleccionar cliente...</option>';
@@ -136,7 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const selects = [
             document.getElementById('ventaProducto')
         ].filter(Boolean);
-
         selects.forEach(select => {
             const prevValue = select.value;
             select.innerHTML = '<option value="">Seleccionar producto...</option>';
@@ -155,7 +142,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('productoProveedor'),
             document.getElementById('cxpProveedor')
         ].filter(Boolean);
-
         selects.forEach(select => {
             const prevValue = select.value;
             select.innerHTML = '<option value="">Seleccionar proveedor...</option>';
@@ -175,7 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const hoy = new Date();
             return fechaVenta.toDateString() === hoy.toDateString();
         }).reduce((sum, venta) => sum + venta.total, 0);
-
         document.getElementById('headerVentas').textContent = `$${ventasHoy}`;
         document.getElementById('headerProductos').textContent = productos.length;
         document.getElementById('headerClientes').textContent = clientes.length;
@@ -186,10 +171,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const ventasMes = ventas.filter(venta => {
             const fechaVenta = new Date(venta.fecha);
             const mesActual = new Date().getMonth();
-            return fechaVenta.getMonth() === mesActual;
+            const añoActual = new Date().getFullYear();
+            return fechaVenta.getMonth() === mesActual && fechaVenta.getFullYear() === añoActual;
         }).reduce((sum, venta) => sum + venta.total, 0);
 
-        const gastosMes = 0; // Aquí deberías calcular los gastos del mes
+        const gastosMes = movimientosCaja.filter(movimiento => {
+            const fechaMovimiento = new Date(movimiento.fecha);
+            const mesActual = new Date().getMonth();
+            const añoActual = new Date().getFullYear();
+            return movimiento.tipo === 'gasto' && fechaMovimiento.getMonth() === mesActual && fechaMovimiento.getFullYear() === añoActual;
+        }).reduce((sum, movimiento) => sum + movimiento.monto, 0);
+
         const utilidadMes = ventasMes - gastosMes;
         const valorInventario = productos.reduce((sum, prod) => sum + (prod.stock * prod.compra), 0);
 
@@ -203,7 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderProductos() {
         const tbody = document.getElementById('productosTableBody');
         if (!tbody) return;
-
         if (!productos.length) {
             tbody.innerHTML = `<tr>
                 <td colspan="8" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -214,7 +205,6 @@ document.addEventListener('DOMContentLoaded', function() {
             updateDashboardAndReports();
             return;
         }
-
         tbody.innerHTML = '';
         productos.forEach((prod, idx) => {
             tbody.innerHTML += `
@@ -264,18 +254,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const stock = parseInt(document.getElementById('productoStock').value);
             const minimo = parseInt(document.getElementById('productoMinimo').value);
             const proveedor = document.getElementById('productoProveedor') ? document.getElementById('productoProveedor').value : '';
-
             if (!nombre || !codigo || !categoria) {
                 alert('Por favor complete los campos obligatorios');
                 return;
             }
-
-            // Verificar código único
             if (productos.some(p => p.codigo === codigo)) {
                 alert('Ya existe un producto con este código');
                 return;
             }
-
             productos.push({ nombre, codigo, categoria, compra, venta, stock, minimo, proveedor });
             saveData('productos', productos);
             renderProductos();
@@ -296,7 +282,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 prod.codigo.toLowerCase().includes(q) ||
                 prod.categoria.toLowerCase().includes(q)
             );
-
             if (!filtered.length) {
                 tbody.innerHTML = `<tr>
                     <td colspan="8" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -305,7 +290,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>`;
                 return;
             }
-
             tbody.innerHTML = '';
             filtered.forEach((prod, idx) => {
                 const originalIdx = productos.findIndex(p => p.codigo === prod.codigo);
@@ -335,7 +319,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderClientes() {
         const tbody = document.getElementById('clientesTableBody');
         if (!tbody) return;
-
         if (!clientes.length) {
             tbody.innerHTML = `<tr>
                 <td colspan="5" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -346,7 +329,6 @@ document.addEventListener('DOMContentLoaded', function() {
             updateDashboardAndReports();
             return;
         }
-
         tbody.innerHTML = '';
         clientes.forEach((cli, idx) => {
             tbody.innerHTML += `
@@ -385,12 +367,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const telefono = document.getElementById('clienteTelefono') ? document.getElementById('clienteTelefono').value.trim() : '';
             const email = document.getElementById('clienteEmail') ? document.getElementById('clienteEmail').value.trim() : '';
             const direccion = document.getElementById('clienteDireccion') ? document.getElementById('clienteDireccion').value.trim() : '';
-
             if (!nombre) {
                 alert('El nombre es obligatorio');
                 return;
             }
-
             clientes.push({ nombre, telefono, email, direccion });
             saveData('clientes', clientes);
             renderClientes();
@@ -411,7 +391,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 (cli.telefono && cli.telefono.toLowerCase().includes(q)) ||
                 (cli.email && cli.email.toLowerCase().includes(q))
             );
-
             if (!filtered.length) {
                 tbody.innerHTML = `<tr>
                     <td colspan="5" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -420,7 +399,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>`;
                 return;
             }
-
             tbody.innerHTML = '';
             filtered.forEach((cli) => {
                 const originalIdx = clientes.findIndex(c => c.nombre === cli.nombre);
@@ -443,7 +421,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderProveedores() {
         const tbody = document.getElementById('proveedoresTableBody');
         if (!tbody) return;
-
         if (!proveedores.length) {
             tbody.innerHTML = `<tr>
                 <td colspan="5" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -453,7 +430,6 @@ document.addEventListener('DOMContentLoaded', function() {
             fillAllProveedoresSelects();
             return;
         }
-
         tbody.innerHTML = '';
         proveedores.forEach((prov, idx) => {
             tbody.innerHTML += `
@@ -488,12 +464,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const contacto = document.getElementById('proveedorContacto') ? document.getElementById('proveedorContacto').value.trim() : '';
             const email = document.getElementById('proveedorEmail') ? document.getElementById('proveedorEmail').value.trim() : '';
             const direccion = document.getElementById('proveedorDireccion') ? document.getElementById('proveedorDireccion').value.trim() : '';
-
             if (!nombre) {
                 alert('El nombre es obligatorio');
                 return;
             }
-
             proveedores.push({ nombre, contacto, email, direccion });
             saveData('proveedores', proveedores);
             renderProveedores();
@@ -514,7 +488,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 (prov.contacto && prov.contacto.toLowerCase().includes(q)) ||
                 (prov.email && prov.email.toLowerCase().includes(q))
             );
-
             if (!filtered.length) {
                 tbody.innerHTML = `<tr>
                     <td colspan="5" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -523,7 +496,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>`;
                 return;
             }
-
             tbody.innerHTML = '';
             filtered.forEach((prov) => {
                 const originalIdx = proveedores.findIndex(p => p.nombre === prov.nombre);
@@ -542,11 +514,39 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Función para generar factura automáticamente
+    function generarFacturaAutomatica(venta, ventaIdx) {
+        const numeroFactura = 'F' + (Date.now().toString().slice(-6));
+        const nuevaFactura = {
+            numero: numeroFactura,
+            ventaId: ventaIdx,
+            fecha: new Date().toLocaleDateString(),
+            cliente: venta.cliente,
+            detalle: `${venta.producto} x${venta.cantidad}`,
+            total: venta.total
+        };
+        facturas.push(nuevaFactura);
+        saveData('facturas', facturas);
+
+        // Marcar venta como facturada
+        venta.facturado = true;
+        saveData('ventas', ventas);
+
+        return numeroFactura;
+    }
+
+    // Función para mostrar diálogo de impresión
+    function mostrarDialogoImpresion(numeroFactura) {
+        return new Promise((resolve) => {
+            const resultado = confirm(`¡Venta registrada exitosamente!\n\nFactura N° ${numeroFactura} generada.\n\n¿Desea imprimir la factura ahora?`);
+            resolve(resultado);
+        });
+    }
+
     // GESTIÓN DE VENTAS
     function renderVentas() {
         const tbody = document.getElementById('ventasTableBody');
         if (!tbody) return;
-
         if (!ventas.length) {
             tbody.innerHTML = `<tr>
                 <td colspan="8" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -556,7 +556,6 @@ document.addEventListener('DOMContentLoaded', function() {
             updateDashboardAndReports();
             return;
         }
-
         tbody.innerHTML = '';
         ventas.forEach((venta, idx) => {
             tbody.innerHTML += `
@@ -591,7 +590,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 producto.stock += venta.cantidad;
                 saveData('productos', productos);
             }
-
             ventas.splice(idx, 1);
             saveData('ventas', ventas);
             renderVentas();
@@ -604,7 +602,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form de ventas
     const ventaForm = document.getElementById('ventaForm');
     if (ventaForm) {
-        ventaForm.addEventListener('submit', function(e) {
+        ventaForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const cliente = document.getElementById('ventaCliente').value;
             const productoId = document.getElementById('ventaProducto').value;
@@ -636,7 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
             saveData('productos', productos);
 
             // Registrar venta
-            ventas.push({
+            const nuevaVenta = {
                 fecha,
                 cliente,
                 producto: producto.nombre,
@@ -645,7 +643,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 total,
                 metodo,
                 facturado: false
-            });
+            };
+            ventas.push(nuevaVenta);
+            const ventaIdx = ventas.length - 1;
             saveData('ventas', ventas);
 
             // Registrar movimiento de caja (si no es crédito)
@@ -659,12 +659,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveData('movimientosCaja', movimientosCaja);
             }
 
+            // Generar factura automáticamente
+            const numeroFactura = generarFacturaAutomatica(nuevaVenta, ventaIdx);
+
+            // Mostrar diálogo de impresión
+            const deseaImprimir = await mostrarDialogoImpresion(numeroFactura);
+
+            if (deseaImprimir) {
+                imprimirFactura(numeroFactura);
+            }
+
+            // Actualizar todas las vistas
             renderVentas();
             renderProductos();
             renderVentasPendientesFacturacion();
+            renderFacturas();
             renderMovimientosCaja();
+            updateHeaderStats();
+            updateDashboardAndReports();
+
             this.reset();
-            alert('Venta registrada exitosamente');
         });
 
         // Actualizar precio y total automáticamente
@@ -694,7 +708,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 venta.producto.toLowerCase().includes(q) ||
                 venta.metodo.toLowerCase().includes(q)
             );
-
             if (!filtered.length) {
                 tbody.innerHTML = `<tr>
                     <td colspan="8" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -703,7 +716,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>`;
                 return;
             }
-
             tbody.innerHTML = '';
             filtered.forEach((venta) => {
                 const originalIdx = ventas.findIndex(v => v.fecha === venta.fecha && v.cliente === venta.cliente && v.total === venta.total);
@@ -733,14 +745,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderVentasPendientesFacturacion() {
         const tbody = document.getElementById('ventasPendientesFacturacionBody');
         if (!tbody) return;
-
         const pendientes = ventas.filter(v => !v.facturado);
-
         if (!pendientes.length) {
             tbody.innerHTML = `<tr><td colspan="7">No hay ventas pendientes de facturación</td></tr>`;
             return;
         }
-
         tbody.innerHTML = '';
         pendientes.forEach(v => {
             const originalIdx = ventas.findIndex(venta =>
@@ -763,12 +772,10 @@ document.addEventListener('DOMContentLoaded', function() {
     window.generarFacturaDesdeVenta = function(ventaIdx) {
         const venta = ventas[ventaIdx];
         if (!venta) return;
-
         if (venta.facturado) {
             alert('Esta venta ya tiene factura.');
             return;
         }
-
         const numeroFactura = 'F' + (Date.now().toString().slice(-6));
         const nuevaFactura = {
             numero: numeroFactura,
@@ -778,14 +785,10 @@ document.addEventListener('DOMContentLoaded', function() {
             detalle: `${venta.producto} x${venta.cantidad}`,
             total: venta.total
         };
-
         facturas.push(nuevaFactura);
         saveData('facturas', facturas);
-
-        // Marcar venta como facturada
         venta.facturado = true;
         saveData('ventas', ventas);
-
         renderFacturas();
         renderVentasPendientesFacturacion();
         renderVentas();
@@ -795,12 +798,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderFacturas() {
         const tbody = document.getElementById('facturasTableBody');
         if (!tbody) return;
-
         if (!facturas.length) {
             tbody.innerHTML = `<tr><td colspan="6">No hay facturas registradas</td></tr>`;
             return;
         }
-
         tbody.innerHTML = '';
         facturas.forEach(f => {
             tbody.innerHTML += `
@@ -821,8 +822,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.imprimirFactura = function(numeroFactura) {
         const f = facturas.find(f => f.numero === numeroFactura);
         if (!f) return;
-
-        // Crear ventana de impresión
         const win = window.open('', '', 'width=600,height=400');
         win.document.write(`
             <html>
@@ -837,7 +836,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </head>
             <body>
                 <div class="header">
-                    <h2>${configuracion.nombreTienda || 'FerContable Pro'}</h2>
+                    <h2>${configuracion.nombreTienda || 'FerContable'}</h2>
                     <p>Factura N° ${f.numero}</p>
                 </div>
                 <div class="info"><strong>Fecha:</strong> ${f.fecha}</div>
@@ -856,7 +855,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderMovimientosCaja() {
         const tbody = document.getElementById('cajaTableBody');
         if (!tbody) return;
-
         if (!movimientosCaja.length) {
             tbody.innerHTML = `<tr>
                 <td colspan="5" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -865,7 +863,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>`;
             return;
         }
-
         tbody.innerHTML = '';
         let saldoActual = 0;
         movimientosCaja.forEach((mov, idx) => {
@@ -890,6 +887,7 @@ document.addEventListener('DOMContentLoaded', function() {
             movimientosCaja.splice(idx, 1);
             saveData('movimientosCaja', movimientosCaja);
             renderMovimientosCaja();
+            updateDashboardAndReports();
         }
     };
 
@@ -902,15 +900,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const monto = parseFloat(document.getElementById('cajaMonto').value);
             const concepto = document.getElementById('cajaConcepto').value.trim();
             const fecha = new Date().toLocaleDateString();
-
             if (!monto || !concepto) {
                 alert('Por favor complete todos los campos');
                 return;
             }
-
             movimientosCaja.push({ fecha, tipo, monto, concepto });
             saveData('movimientosCaja', movimientosCaja);
             renderMovimientosCaja();
+            updateDashboardAndReports();
             this.reset();
             alert('Movimiento registrado exitosamente');
         });
@@ -920,7 +917,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderCreditos() {
         const tbody = document.getElementById('creditosTableBody');
         if (!tbody) return;
-
         if (!creditos.length) {
             tbody.innerHTML = `<tr>
                 <td colspan="6" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -929,7 +925,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>`;
             return;
         }
-
         tbody.innerHTML = '';
         creditos.forEach((cred, idx) => {
             const fechaVencimiento = new Date(cred.fechaVencimiento);
@@ -971,12 +966,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const monto = parseFloat(document.getElementById('creditoMonto').value);
             const fechaVencimiento = document.getElementById('creditoVencimiento').value;
             const descripcion = document.getElementById('creditoDescripcion').value.trim();
-
             if (!cliente || !monto || !fechaVencimiento) {
                 alert('Por favor complete todos los campos');
                 return;
             }
-
             creditos.push({ cliente, monto, fechaVencimiento, descripcion });
             saveData('creditos', creditos);
             renderCreditos();
@@ -989,7 +982,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderCuentasPorPagar() {
         const tbody = document.getElementById('cxpTableBody');
         if (!tbody) return;
-
         if (!cuentasPorPagar.length) {
             tbody.innerHTML = `<tr>
                 <td colspan="6" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -998,7 +990,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>`;
             return;
         }
-
         tbody.innerHTML = '';
         cuentasPorPagar.forEach((cxp, idx) => {
             const fechaVencimiento = new Date(cxp.fechaVencimiento);
@@ -1040,12 +1031,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const monto = parseFloat(document.getElementById('cxpMonto').value);
             const fechaVencimiento = document.getElementById('cxpVencimiento').value;
             const descripcion = document.getElementById('cxpDescripcion').value.trim();
-
             if (!proveedor || !monto || !fechaVencimiento) {
                 alert('Por favor complete todos los campos');
                 return;
             }
-
             cuentasPorPagar.push({ proveedor, monto, fechaVencimiento, descripcion });
             saveData('cuentasPorPagar', cuentasPorPagar);
             renderCuentasPorPagar();
@@ -1058,7 +1047,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderUsuarios() {
         const tbody = document.getElementById('usuariosTableBody');
         if (!tbody) return;
-
         if (!usuarios.length) {
             tbody.innerHTML = `<tr>
                 <td colspan="4" style="text-align: center; padding: 40px; color: #6b7280;">
@@ -1067,7 +1055,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>`;
             return;
         }
-
         tbody.innerHTML = '';
         usuarios.forEach((user, idx) => {
             tbody.innerHTML += `
@@ -1098,12 +1085,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const nombre = document.getElementById('usuarioNombre').value.trim();
             const password = document.getElementById('usuarioPassword').value.trim();
             const rol = document.getElementById('usuarioRol').value;
-
             if (!nombre || !password || !rol) {
                 alert('Por favor complete todos los campos');
                 return;
             }
-
             usuarios.push({ nombre, password, rol });
             saveData('usuarios', usuarios);
             renderUsuarios();
@@ -1117,7 +1102,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const alertasStockBajo = document.getElementById('alertasStockBajo');
         const alertasCreditosVencidos = document.getElementById('alertasCreditosVencidos');
         const alertasCxpVencidas = document.getElementById('alertasCxpVencidas');
-
         if (!alertasStockBajo || !alertasCreditosVencidos || !alertasCxpVencidas) return;
 
         // Alertas de stock bajo
@@ -1166,10 +1150,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (periodo === 'mes') {
             startDate.setMonth(startDate.getMonth() - 1);
         }
-
         const ventasPeriodo = ventas.filter(venta => new Date(venta.fecha) >= startDate);
         const totalVentas = ventasPeriodo.reduce((sum, venta) => sum + venta.total, 0);
-
         alert(`Reporte de ${periodo}: Total de ventas = $${totalVentas}`);
     };
 
