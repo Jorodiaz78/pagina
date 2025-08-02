@@ -767,6 +767,30 @@ html, body {
     padding-top: env(safe-area-inset-top, 20px);
   }
 }
+@media (max-width: 600px) {
+  html, body {
+    padding-top: env(safe-area-inset-top, 20px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: auto !important;
+  }
+
+  .container {
+    min-height: unset !important;
+    overflow: visible !important;
+  }
+
+  .main-content,
+  .dashboard,
+  .wrapper,
+  .layout,
+  .content-area {
+    height: auto !important;
+    overflow-y: visible !important;
+    overflow: visible !important;
+  }
+}
+
 
 
 
