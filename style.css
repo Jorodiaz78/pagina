@@ -10,6 +10,7 @@ body {
     min-height: 100vh;
     line-height: 1.6;
     color: #334155;
+      padding-top: env(safe-area-inset-top, 20px);
 }
 
 .container { 
@@ -734,4 +735,5 @@ body {
     overflow: visible !important;
   }
 }
+
 
