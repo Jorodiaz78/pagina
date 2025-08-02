@@ -752,5 +752,21 @@ body {
     margin-top: 0 !important;
   }
 }
+html, body {
+  padding-top: env(safe-area-inset-top, 20px);
+  box-sizing: border-box;
+}
+
+@supports(padding: max(0px)) {
+  html, body {
+    padding-top: max(env(safe-area-inset-top), 20px);
+  }
+}
+@media (max-width: 600px) {
+  html, body {
+    padding-top: env(safe-area-inset-top, 20px);
+  }
+}
+
 
 
