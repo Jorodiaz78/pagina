@@ -16,10 +16,10 @@ body {
     max-width: 1200px; 
     margin: 20px auto; 
     background: rgba(255, 255, 255, 0.95); 
-    min-height: calc(100vh - 40px); 
+    min-height: auto;
     border-radius: 24px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-    overflow: hidden;
+    overflow: visible;
     backdrop-filter: blur(10px);
 }
 
@@ -688,55 +688,50 @@ body {
 }
 
 @media (max-width: 600px) {
-  /* Fuerza todos los pares de campos en formularios a comportarse en columna */
-  .form-row,
-  .venta-row,
-  .credito-row,
-  .pago-row,
-  .inventario-row,
-  .row,
-  .formulario-flex,
-  .grouped-fields {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
+  .summary-grid,
+  .dashboard-grid,
+  .dashboard-main,
+  .dashboard-grid.dashboard-main {
+    grid-template-columns: 1fr;
+  }
+
+  .card,
+  .summary-card {
+    max-width: 100%;
+  }
+
+  .header-stats {
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
   }
 
-  .form-row > *,
-  .venta-row > *,
-  .credito-row > *,
-  .pago-row > *,
-  .inventario-row > *,
-  .row > *,
-  .formulario-flex > *,
-  .grouped-fields > * {
-    width: 100% !important;
-  }
-
-  /* Asegura que los campos no se corten dentro de inputs */
-  input,
-  select,
-  textarea {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
-  }
-
-  /* Corrige tablas que se salen del ancho de la pantalla */
-  .data-table-container {
+  .nav-tabs {
     overflow-x: auto;
+    padding-bottom: 5px;
+  }
+  .nav-tab {
+    flex: 0 0 auto;
+    margin-right: 8px;
   }
 
   .data-table {
-    min-width: 100%;
-    font-size: 13px;
+    font-size: 12px;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 10px 12px;
   }
 
-  /* Ajustes visuales adicionales */
-  .card {
-    padding: 16px;
+  .container {
+    margin: 5px;
+    border-radius: 12px;
   }
 }
-
+@media (max-width: 600px) {
+  .container {
+    min-height: unset !important;
+    overflow: visible !important;
+  }
+}
 
