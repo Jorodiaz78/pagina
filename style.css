@@ -734,23 +734,4 @@ body {
     overflow: visible !important;
   }
 }
-@media (max-width: 600px) {
-  html, body {
-    height: auto !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-  }
-
-  header, .header, .dashboard-header {
-    margin-top: 0 !important;
-    padding-top: 1rem !important;
-    position: relative !important;
-    z-index: 1;
-  }
-
-  .container {
-    margin-top: 0 !important;
-  }
-}
-
 
