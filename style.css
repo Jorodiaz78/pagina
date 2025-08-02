@@ -728,3 +728,15 @@ body {
     border-radius: 12px;
   }
 }
+@media (max-width: 600px) {
+  /* Fuerza los pares de campos a estar en columna */
+  .form-row, .venta-row, .input-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .form-row > *, .venta-row > *, .input-row > * {
+    width: 100% !important;
+  }
+}
+
